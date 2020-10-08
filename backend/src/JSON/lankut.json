@@ -5,7 +5,7 @@
     "Reason": "Lorem ipsum miksi kuvan puu on luokkaa X",
     "Image": "/images/lankku1.png",
     "ID": "00001"
-  },  
+  },
   {
     "Type": "Pine",
     "Grade": "2",
@@ -26,5 +26,19 @@
     "Reason": "Lorem ipsum miksi kuvan puu on luokkaa X",
     "Image": "/images/lankku4.png",
     "ID": "00004"
+  },
+  {
+    "Type": "Pine",
+    "Grade": "5",
+    "Reason": "Lorem ipsum miksi kuvan puu on luokkaa 5",
+    "Image": "/images/lankku5.png",
+    "ID": "00005"
+  },
+  {
+    "Type": "Pine",
+    "Grade": "6",
+    "Reason": "Lorem ipsum miksi kuvan puu on luokkaa 6",
+    "Image": "/images/lankku6.png",
+    "ID": "00006"
   }
 ]
