@@ -2,7 +2,7 @@ const { Console } = require('console')
 const express = require('express')
 var fs = require("fs"),json
 const app = express()
-const port = 3000
+const port = process.env.port || 3000
 var filepath = __dirname
 var pathTowoodLibrary ='JSON/lankut.json'
 var woodLibrary
