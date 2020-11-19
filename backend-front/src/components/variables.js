@@ -2,7 +2,7 @@
 //Usage
 //import {backend} from './components/variables'
 export const backend = {
-    URL: "localhost:3001"
+    URL: "http://localhost:3000"
 }
 
 

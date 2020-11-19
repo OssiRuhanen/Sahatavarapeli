@@ -6,10 +6,8 @@ import {backend} from './variables';
 import axios from 'axios';
 
 const LoginScreen = (props) => {
-    const [show, setShow] = useState(props.show || false) // modal show
     const [detail, setDetail] = useState("")
     let canLogin = true;
-
     function clickHandler(e){
         e.preventDefault();
         console.log(e.target.form[0].value);
@@ -20,6 +18,11 @@ const LoginScreen = (props) => {
         console.log(backend.URL+'/login');
         if(canLogin){
             canLogin = false
+
+            //--------------
+            canLogin = true
+            props.setShow(false)
+            //--------------
             axios.post(backend.URL+'/login',{
                 "username": un,
                 "password": pw
@@ -28,7 +31,7 @@ const LoginScreen = (props) => {
                 //handle successful request
                 setDetail("Login Success")
                 canLogin = true
-                setShow(false)
+                props.setShow(false)
             })
             .catch(function (err){
                 //handle network error
@@ -40,7 +43,7 @@ const LoginScreen = (props) => {
 
     return (
         <Modal 
-            show={show}
+            show={props.show}
             backdrop="static"
             keyboard={false}
         >
@@ -56,7 +59,7 @@ const LoginScreen = (props) => {
                     <Form.Group controlId="form-password">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password"/>
-                        <Form.Text className={detail == "Login Success" ? "text-success" : "text-danger"}>
+                        <Form.Text className={detail === "Login Success" ? "text-success" : "text-danger"}>
                             {detail}
                         </Form.Text>
                     </Form.Group>
