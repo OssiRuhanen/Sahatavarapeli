@@ -76,6 +76,19 @@ app.post('/', function(req, res, next) {
   res.json(req.body)
 })
 
+// get / sends JSON object
+app.get('/sql', function(req, res, next) {
+  var returnItem
+  var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 1;";
+  // Get amount of items
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(JSON.parse(JSON.stringify(result)));
+    returnItem = result
+  });
+  res.json(returnItem);
+});
+
 app.post('/sql', function(req, res, next){
   var data = req.body;
   console.log(data.Type);
