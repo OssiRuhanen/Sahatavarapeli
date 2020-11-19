@@ -81,20 +81,19 @@ app.get('/sql', function(req, res, next) {
   var returnItem
   var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 1;";
   // Get amount of items
-  con.query(sql, function (err, result) {
+  con.query(sql, (err, result) => {
     if (err) throw err;
     returnItem = JSON.parse(JSON.stringify(result))
     console.log(returnItem);
   });
-  res.json(returnItem);
+  res.json({ returnItem });
 });
 
 app.post('/sql', function(req, res, next){
   var data = req.body;
   console.log(data.Type);
-  var sql = "INSERT INTO timber (type, grade, reason_finnish, reason_english, imagepath) VALUES (" 
-  +data.type+","+data.grade+","+data.reason_finnish+","+data.reason_english+","+data.imagepath+")";
-  con.query(sql, function (err, result) {
+  var sql = "INSERT INTO timber (type, grade, reason_finnish, reason_english, imagepath) VALUES (?, ?, ?, ?, ?)";
+  con.query(sql, [data.type, data.grade, data.reason_finnish, data.reason_english, data.imagepath], (err, result) => {
     if (err) throw err;
     console.log("1 record inserted");
   });
