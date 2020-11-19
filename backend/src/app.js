@@ -2,6 +2,7 @@ const { Console } = require('console');
 const express = require('express');
 var mysql = require('mysql');
 const multer = require('multer')
+const cors = require('cors')
 var fs = require("fs"),json;
 var path = require('path');
 const app = express()
@@ -11,7 +12,7 @@ var filenames =[];
 var pathTowoodLibrary ='JSON/lankut.json'
 var woodLibrary;
 app.use(express.json());
-
+app.use(cors())
 //sql testing
 var con = mysql.createConnection({
   host: "localhost",
@@ -49,7 +50,7 @@ console.log(randomValue)
 
 //Image Storage Engine
 const storage = multer.diskStorage({
-  destination: './images/',
+  destination: __dirname+'/images/',
   filename: function(req, file, callback){
     callback(null, file.originalname)
   }
