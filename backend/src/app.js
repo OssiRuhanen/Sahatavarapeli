@@ -1,12 +1,31 @@
-const { Console } = require('console')
-const express = require('express')
-var fs = require("fs"),json
+const { Console } = require('console');
+const express = require('express');
+var mysql = require('mysql');
+var fs = require("fs"),json;
+var path = require('path');
 const app = express()
-const port = process.env.port || 3000
-var filepath = __dirname
+const port = 3000
+var filepath = __dirname;
+var filenames =[];
 var pathTowoodLibrary ='JSON/lankut.json'
-var woodLibrary
-app.use(express.json())
+var woodLibrary;
+app.use(express.json());
+
+//sql testing
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "hnais4op",
+  database: "timberdb"
+});
+
+function test(){
+    con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+})};
+
+test();
 
 function readJsonFileSync(filepath, encoding){
 
@@ -18,32 +37,28 @@ function readJsonFileSync(filepath, encoding){
 }
 
 function getJSON(file){
-
     var filepath = __dirname + '/' + file;
     return readJsonFileSync(filepath);
 }
 
-woodLibrary = getJSON(pathTowoodLibrary)
+woodLibrary = getJSON(pathTowoodLibrary);
 var values = Object.values(woodLibrary)
-var randomObject = values[parseInt(Math.random() * values.length)]
-console.log(randomObject)
+var randomValue = values[parseInt(Math.random() * values.length)]
+console.log(randomValue)
 
 // get / sends JSON object
 app.get('/', function(req, res, next) {
-    var randomObject = values[parseInt(Math.random() * values.length)]
-    res.json(randomObject)
-    console.log(randomObject)
+    var randomValue = values[parseInt(Math.random() * values.length)]
+    res.json(randomValue);
+    console.log(randomValue);
   });
 
 // get /image for testing purposes
 app.get('/image', function(req, res, next) {
-    var randomObject = values[parseInt(Math.random() * values.length)]
-    res.sendFile(filepath+randomObject.Image)
-  })
+    var randomValue = values[parseInt(Math.random() * values.length)]
+    res.sendFile(filepath+randomValue.Image);
+  });
 
-// post request for adding new content to lankut.json
-// Tää varmaan pitäis tehdä promisella että saa noi errorit mukaan
-// varmaan kanssa jotain chekkejä että toi body on oikein
 app.post('/', function(req, res, next) {
   fs.readFile(pathTowoodLibrary, (error, data) =>  {
     var json = JSON.parse(data)
@@ -60,6 +75,18 @@ app.post('/', function(req, res, next) {
   }) 
   res.json(req.body)
 })
+
+app.post('/sql', function(req, res, next){
+  var data = req.body;
+  console.log(data.Type);
+  var sql = "INSERT INTO timber (type, grade, reason_finnish, reason_english, imagepath) VALUES (" 
+  +data.type+","+data.grade+","+data.reason_finnish+","+data.reason_english+","+data.imagepath+")";
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+  res.json(req.body)
+});
 
 app.listen(port, () => {
   console.log(`Sahapeli app listening at http://localhost:${port}`)
