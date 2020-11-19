@@ -83,8 +83,8 @@ app.get('/sql', function(req, res, next) {
   // Get amount of items
   con.query(sql, function (err, result) {
     if (err) throw err;
-    console.log(JSON.parse(JSON.stringify(result)));
-    returnItem = result
+    returnItem = JSON.parse(JSON.stringify(result))
+    console.log(returnItem);
   });
   res.json(returnItem);
 });
