@@ -1,6 +1,7 @@
 const { Console } = require('console');
 const express = require('express');
 var mysql = require('mysql');
+const multer = require('multer')
 var fs = require("fs"),json;
 var path = require('path');
 const app = express()
@@ -46,6 +47,19 @@ var values = Object.values(woodLibrary)
 var randomValue = values[parseInt(Math.random() * values.length)]
 console.log(randomValue)
 
+//Image Storage Engine
+const storage = multer.diskStorage({
+  destination: './images/',
+  filename: function(req, file, callback){
+    callback(null, file.originalname)
+  }
+})
+//Init upload
+const upload = multer({
+  storage: storage
+}).single('image')
+
+//ROUTES
 // get / sends JSON object
 app.get('/', function(req, res, next) {
     var randomValue = values[parseInt(Math.random() * values.length)]
@@ -99,6 +113,19 @@ app.post('/sql', function(req, res, next){
   });
   res.json(req.body)
 });
+
+//Image upload route
+app.post('/upload', (req, res)=>{
+  upload(req,res, (err) =>{
+    if(err){
+      res.status(500)
+    }
+    else{
+      console.log(req.file);
+      res.sendStatus(200)
+    }
+  })
+})
 
 app.listen(port, () => {
   console.log(`Sahapeli app listening at http://localhost:${port}`)
