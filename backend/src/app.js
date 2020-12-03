@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { Console, debug } = require('console');
 const express = require('express');
 var mysql = require('mysql');
@@ -11,12 +12,13 @@ var imagepath = "";
 var pathTowoodLibrary ='JSON/lankut.json'
 app.use(express.json());
 app.use(cors())
+
 //sql testing
 var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "hnais4op",
-  database: "timberdb"
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
 });
 
 function connect(){
