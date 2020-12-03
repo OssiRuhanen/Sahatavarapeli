@@ -1,16 +1,14 @@
-const { Console } = require('console');
+const { Console, debug } = require('console');
 const express = require('express');
 var mysql = require('mysql');
 const multer = require('multer')
 const cors = require('cors')
 var fs = require("fs"),json;
-var path = require('path');
 const app = express()
 const port = 3000
 var filepath = __dirname;
-var filenames =[];
+var imagepath = "";
 var pathTowoodLibrary ='JSON/lankut.json'
-var woodLibrary;
 app.use(express.json());
 app.use(cors())
 //sql testing
@@ -21,32 +19,13 @@ var con = mysql.createConnection({
   database: "timberdb"
 });
 
-function test(){
+function connect(){
     con.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
 })};
 
-test();
-
-function readJsonFileSync(filepath, encoding){
-
-    if (typeof (encoding) == 'undefined'){
-        encoding = 'utf8';
-    }
-    var file = fs.readFileSync(filepath, encoding);
-    return JSON.parse(file);
-}
-
-function getJSON(file){
-    var filepath = __dirname + '/' + file;
-    return readJsonFileSync(filepath);
-}
-
-woodLibrary = getJSON(pathTowoodLibrary);
-var values = Object.values(woodLibrary)
-var randomValue = values[parseInt(Math.random() * values.length)]
-console.log(randomValue)
+connect();
 
 //Image Storage Engine
 const storage = multer.diskStorage({
@@ -61,54 +40,35 @@ const upload = multer({
 }).single('image')
 
 //ROUTES
-// get / sends JSON object
-app.get('/', function(req, res, next) {
-    var randomValue = values[parseInt(Math.random() * values.length)]
-    res.json(randomValue);
-    console.log(randomValue);
-  });
-
 // get /image for testing purposes
-app.get('/image', function(req, res, next) {
-    var randomValue = values[parseInt(Math.random() * values.length)]
-    res.sendFile(filepath+randomValue.Image);
-  });
+// app.get('/image', function(req, res, next) {
+//     var randomValue = values[parseInt(Math.random() * values.length)]
+//     res.sendFile(filepath+randomValue.Image);
+//   });
 
-app.post('/', function(req, res, next) {
-  fs.readFile(pathTowoodLibrary, (error, data) =>  {
-    var json = JSON.parse(data)
-    json.push(req.body)
-    // write JSON string to a file
-    fs.writeFile("./"+pathTowoodLibrary, JSON.stringify(json), (err) => {
-      if (err) {
-          console.log("err")
-      }
-      else {
-        console.log("JSON data is saved.")
-      }
-    }); 
-  }) 
-  res.json(req.body)
-})
-
-// get / sends JSON object
-app.get('/sql', function(req, res, next) {
+// get /sql returns random object from database
+app.get('/timber', function(req, res, next) {
   var returnItem
   var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 1;";
-  // Get amount of items
   con.query(sql, (err, result) => {
     if (err) throw err;
     returnItem = JSON.parse(JSON.stringify(result))
-    console.log(returnItem);
+    console.log(returnItem[0].imagepath);
   });
   res.json({ returnItem });
 });
 
-app.post('/sql', function(req, res, next){
+// Get image with filepath
+app.get('/image/:path',function(req, res, next) {
+  console.log(req.params.path);
+  res.sendFile(req.params.path.Image);
+});
+
+app.post('/timber', function(req, res, next){
   var data = req.body;
   console.log(data.Type);
   var sql = "INSERT INTO timber (type, grade, reason_finnish, reason_english, imagepath) VALUES (?, ?, ?, ?, ?)";
-  con.query(sql, [data.type, data.grade, data.reason_finnish, data.reason_english, data.imagepath], (err, result) => {
+  con.query(sql, [data.type, data.grade, data.reason_finnish, data.reason_english, imagepath], (err, result) => {
     if (err) throw err;
     console.log("1 record inserted");
   });
@@ -122,8 +82,13 @@ app.post('/upload', (req, res)=>{
       res.status(500)
     }
     else{
-      console.log(req.file);
-      res.sendStatus(200)
+      // Get folder size for naming purposes
+      fs.readdir(__dirname+'/images/', (err, files) => {
+        fs.renameSync(req.file.path, __dirname+'/images/'+files.length+"_"+req.file.originalname)
+        imagepath = req.file.path;
+        console.log(req.file);
+        res.sendStatus(200)
+      });
     }
   })
 })
