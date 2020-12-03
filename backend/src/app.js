@@ -36,6 +36,7 @@ const storage = multer.diskStorage({
     callback(null, file.originalname)
   }
 })
+
 //Init upload
 const upload = multer({
   storage: storage
@@ -52,6 +53,7 @@ const upload = multer({
 app.get('/timber', function(req, res, next) {
   var returnItem
   var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 1;";
+  
   con.query(sql, (err, result) => {
     if (err) throw err;
     returnItem = JSON.parse(JSON.stringify(result))
@@ -60,10 +62,37 @@ app.get('/timber', function(req, res, next) {
   res.json({ returnItem });
 });
 
+// get /sql returns random object from database
+app.get('/timber/array', function(req, res, next) {
+  var returnItem = [];
+  var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 3;";
+  
+  con.query(sql, (err, result) => {
+    if (err) throw err;
+
+    Object.keys(result).forEach((key) => {
+      var row = result[key];
+
+      console.log(row);
+
+      returnItem.push(row);
+    });
+
+    console.log(returnItem);
+    res.json({ planks: returnItem });
+
+  });
+
+  //console.log(returnItem);
+  //res.json(returnItem);
+});
+
 // Get image with filepath
 app.get('/image/:path',function(req, res, next) {
-  console.log(req.params.path);
-  res.sendFile(req.params.path.Image);
+  var path = req.params.path;
+
+  console.log(path);
+  res.sendFile(__dirname + '/images/' + path);
 });
 
 app.post('/timber', function(req, res, next){
