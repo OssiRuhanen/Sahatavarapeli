@@ -130,7 +130,7 @@ app.post('/upload', (req, res)=>{
 // Get top 10 highscores
 app.get('/highscores',function (req,res,next){
   var returnItem = [];
-  var sql = "SELECT * FROM highscore ORDER BY score LIMIT 10;";
+  var sql = "SELECT * FROM highscore ORDER BY score DESC LIMIT 10;";
   con.query(sql, (err, result) => {
     if (err) throw err;
 
