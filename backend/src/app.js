@@ -124,6 +124,43 @@ app.post('/upload', (req, res)=>{
   })
 })
 
+
+// Highscores
+
+// Get top 10 highscores
+app.get('/highscores',function (req,res,next){
+  var returnItem = [];
+  var sql = "SELECT * FROM highscore ORDER BY score LIMIT 10;";
+  con.query(sql, (err, result) => {
+    if (err) throw err;
+
+    Object.keys(result).forEach((key) => {
+      var row = result[key];
+
+      console.log(row);
+
+      returnItem.push(row);
+    });
+
+    console.log(returnItem);
+    res.json({ scores: returnItem });
+
+  });
+});
+
+// post highscore
+app.post('/highscores', function(req, res, next){
+  console.log(req.body);
+  var data = req.body;
+  console.log(data.Type);
+  var sql = "INSERT INTO highscore (username, score) VALUES (?, ?)";
+  con.query(sql, [data.username, data.score], (err, result) => {
+    if (err) throw err;
+    console.log("1 score inserted");
+  });
+  res.json(req.body)
+});
+
 app.listen(port, () => {
   console.log(`Sahapeli app listening at http://localhost:${port}`)
 })
