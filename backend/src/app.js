@@ -7,9 +7,7 @@ const cors = require('cors')
 var fs = require("fs"),json;
 const app = express()
 const port = 3000
-var filepath = __dirname;
 var imagepath = "";
-var pathTowoodLibrary ='JSON/lankut.json'
 app.use(express.json());
 app.use(cors())
 
@@ -65,7 +63,7 @@ app.get('/timber', function(req, res, next) {
 // get /sql returns random object from database
 app.get('/timber/array', function(req, res, next) {
   var returnItem = [];
-  var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 3;";
+  var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 15;";
   
   con.query(sql, (err, result) => {
     if (err) throw err;
@@ -82,9 +80,6 @@ app.get('/timber/array', function(req, res, next) {
     res.json({ planks: returnItem });
 
   });
-
-  //console.log(returnItem);
-  //res.json(returnItem);
 });
 
 // Get image with filepath
@@ -116,7 +111,7 @@ app.post('/upload', (req, res)=>{
       // Get folder size for naming purposes
       fs.readdir(__dirname+'/images/', (err, files) => {
         fs.renameSync(req.file.path, __dirname+'/images/'+files.length+"_"+req.file.originalname)
-        imagepath = req.file.path;
+        imagepath = files.length+"_"+req.file.originalname;
         console.log(req.file);
         res.sendStatus(200)
       });
