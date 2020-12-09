@@ -60,7 +60,7 @@ app.get('/timber', function(req, res, next) {
   res.json({ returnItem });
 });
 
-// get /sql returns random object from database
+// returns random array of 15 objects from database
 app.get('/timber/array', function(req, res, next) {
   var returnItem = [];
   var sql = "SELECT * FROM timber ORDER BY RAND() LIMIT 15;";
@@ -70,15 +70,11 @@ app.get('/timber/array', function(req, res, next) {
 
     Object.keys(result).forEach((key) => {
       var row = result[key];
-
       console.log(row);
-
       returnItem.push(row);
     });
-
     console.log(returnItem);
     res.json({ planks: returnItem });
-
   });
 });
 
@@ -131,15 +127,10 @@ app.get('/highscores',function (req,res,next){
 
     Object.keys(result).forEach((key) => {
       var row = result[key];
-
       console.log(row);
-
       returnItem.push(row);
     });
-
-    console.log(returnItem);
     res.json({ scores: returnItem });
-
   });
 });
 
