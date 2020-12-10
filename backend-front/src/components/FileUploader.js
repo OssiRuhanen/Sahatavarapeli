@@ -5,10 +5,10 @@ import {backend} from './variables'
 
 const FileUploader = (props) => {
 
-    const [files, setFiles] = useState([])
+    const [files, setFiles] = useState([]) //array to store files
 
-    function uploadFile(file){
-        let fd = new FormData();
+    function uploadFile(file){ //file is a object to be uploaded
+        let fd = new FormData(); //file is sent using javascript FormData
         fd.append("image",file)
         const req = axios.post(backend.URL+"/upload",
             fd, 
@@ -22,16 +22,20 @@ const FileUploader = (props) => {
             return req
             .then(function (res){
                 //handle success
-                console.log("success")
                 return true
             })
             .catch(function (error){
                 //handle error
-                console.log("error")
                 return false
             })
     }
-    async function uploadFiles(files){ //file[]
+
+    //How this works:
+    //1. method receives files array
+    //2. while array is not empty and there are less than 3 attempts do:
+    //3. Try to send file from 0 index of array
+    //4. If it fails, increment retry and goto step 3. If it succeeds, remove element from index 0, thus putting moving elements up the array.
+    async function uploadFiles(files){ //file[] of file objects
         console.log("Starting upload")
         let retry = 0;
         while(files.length > 0 && retry < 3){
@@ -52,26 +56,21 @@ const FileUploader = (props) => {
         }
     }
 
+    //From the UI input to this code.
+    //In this context, it's the Form.File element. Think of it as a input html element.
+    //When a file is set using the button it calls the onChange. The e is the element of the caller.
+    //does not support multiple files.
     async function fileHandler(e){
-        let file = e.target.files[0]
+        let file = e.target.files[0] //e.target.files is where the files are, in this case however since it's a single file input there's only one in index 0
         if(!addFile(file)) console.log("Error", "Wrong File Type");
-        // if(await uploadFile(file)){
-        //     //handle success
-        //     console.log("Success")
-        // }
-        // else{
-        //     //handle error
-        //     console.log("Error")
-        // }
-
     }
 
+    //Method for adding files to the files state
     function addFile(file){
-        console.log("filehandler",file);
-        const fileTypes = /jpeg|jpg|png|gif/
-        const isOfType = fileTypes.test(file.name)
+        const fileTypes = /jpeg|jpg|png|gif/ // filter of accepted types
+        const isOfType = fileTypes.test(file.name) // tests if file.name has fileTypes extension name
         if(isOfType){
-            setFiles(files.concat(file));
+            setFiles(files.concat(file)); //adds file to the array
             return true;
         }
         else{

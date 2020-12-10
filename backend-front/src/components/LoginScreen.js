@@ -5,21 +5,26 @@ import Button from 'react-bootstrap/Button';
 import {backend} from './variables';
 import axios from 'axios';
 
+
+//Uses a modal for authentication
+//This is useful for scenarios when submitting requests with expired authentication token
+//Put simply, in App.js set the state of loginshow to true and this modal pops up. 
+//For example in component prop, use a setShow={()=>{setLoginShow(true)}} and in the code call setShow()
+//However, this does not re-attempt the previous request by the user.
 const LoginScreen = (props) => {
-    const [detail, setDetail] = useState("")
-    let canLogin = true;
+    const [detail, setDetail] = useState("")// msg in the modal
+    let canLogin = true; // prevents login spam
+
+    //When login button is pressed
     function clickHandler(e){
-        e.preventDefault();
-        console.log(e.target.form[0].value);
-        console.log(e.target.form[1].value);
+        e.preventDefault(); //prevents form from refreshing the app
         let un = e.target.form[0].value
         let pw = e.target.form[1].value
 
         console.log(backend.URL+'/login');
         if(canLogin){
             canLogin = false
-
-            //--------------
+            //--------------Remove when working with a working backend remove this block
             canLogin = true
             props.setShow(false)
             //--------------
@@ -29,7 +34,7 @@ const LoginScreen = (props) => {
             })
             .then(function (res){
                 //handle successful request
-                setDetail("Login Success")
+                setDetail("Login Success?")
                 canLogin = true
                 props.setShow(false)
             })
@@ -67,7 +72,7 @@ const LoginScreen = (props) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                Footer
+                
             </Modal.Footer>
         </Modal>
     );
